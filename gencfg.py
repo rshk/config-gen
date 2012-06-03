@@ -10,10 +10,9 @@ from ConfigParser import RawConfigParser, NoSectionError, NoOptionError
 from UserDict import DictMixin
 
 
-PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
-CONF_DIR = os.path.join(PROJECT_DIR, 'conf')
-TEMPLATES_DIR = os.path.join(PROJECT_DIR, 'templates')
-BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
+CONF_DIR = None
+TEMPLATES_DIR = None
+BUILD_DIR = None
 EXCLUDE_FILES = [r'.*~']
 
 
@@ -181,12 +180,14 @@ if __name__ == '__main__':
         print ", ".join(sorted(ACCESSORS.keys()))
         sys.exit(0)
 
-    if options.conf_dir:
-        CONF_DIR = options.conf_dir
-    if options.templates_dir:
-        TEMPLATES_DIR = options.templates_dir
-    if options.build_dir:
-        BUILD_DIR = options.build_dir
+    CONF_DIR = options.conf_dir
+    TEMPLATES_DIR = options.templates_dir
+    BUILD_DIR = options.build_dir
+
+    if not (CONF_DIR and TEMPLATES_DIR and BUILD_DIR):
+        print >> sys.stderr, "The -C -T and -B options are reuquired!"
+        print >> sys.stderr, "See --help for more information"
+        sys.exit(2)
 
     ## Show some info
     print "Loaded %d accessor(s) and %d renderer(s)" % (len(ACCESSORS), len(RENDERERS))
