@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='Config-gen',
@@ -17,5 +17,5 @@ setup(
         "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Topic :: Utilities",
     ],
-    requires=["jinja2", "demjson"],
+    install_requires=["jinja2", "demjson"],
 )
