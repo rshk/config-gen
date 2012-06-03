@@ -17,4 +17,5 @@ setup(
         "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Topic :: Utilities",
     ],
+    requires=["jinja2", "demjson"],
 )
