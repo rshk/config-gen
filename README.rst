@@ -21,6 +21,14 @@ or ``pip install git+git://github.com/rshk/config-gen.git``.
 The script will be installed in path with the name ``gencfg.py``.
 
 
+Trying out
+==========
+
+From the sources directory, run::
+
+    python gencfg.py -C ./examples/conf -T ./examples/templates -B ./examples/build
+
+
 Supported configuration files
 =============================
 
