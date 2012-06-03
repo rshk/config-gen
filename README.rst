@@ -12,6 +12,15 @@ What it basically does is:
 * Render a bunch of files through some template engine, passing the context.
 
 
+Installation
+============
+
+You can run ``python setup.py install`` from the source directory,
+or ``pip install git+git://github.com/rshk/config-gen.git``.
+
+The script will be installed in path with the name ``gencfg.py``.
+
+
 Supported configuration files
 =============================
 
