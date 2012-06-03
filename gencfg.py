@@ -98,9 +98,22 @@ class PyFileAccessor(BaseFileAccessor, DictMixin):
         else:
             return member
 
+class JsonFileAccessor(BaseFileAccessor, DictMixin):
+    def __init__(self, filename):
+        super(JsonFileAccessor, self).__init__(filename)
+        try:
+            import demjson
+            with open(self.filename, 'r') as f:
+                self._parsed = demjson.decode(f.read())
+        except ImportError:
+            import json
+            with open(self.filename, 'r') as f:
+                self._parsed = json.load(f)
+
+
 ACCESSORS = {
     'ini': IniFileAccessor,
-    'json': None,
+    'json': JsonFileAccessor,
     'csv': CsvFileAccessor,
     'py': PyFileAccessor,
     'xml': None,
@@ -128,7 +141,6 @@ class Jinja2Renderer(BaseRenderer):
             template_text = f.read()
         template = Template(template_text)
         return template.render(context)
-
 
 RENDERERS = {
     'jinja2': Jinja2Renderer,
@@ -162,7 +174,9 @@ if __name__ == '__main__':
             raise GenCfgException("Multiple files with base name '%s' were found" % _cff_name)
         CONTEXT[_cff_name] = accessor
 
-    ## TODO: For each file in templates, render and write to build
+    ## For each file in templates, render and write to build
+    if not os.path.exists(BUILD_DIR):
+        os.makedirs(BUILD_DIR)
     for template_file in os.listdir(TEMPLATES_DIR):
         print "RENDER %s" % template_file
         srcfile = os.path.join(TEMPLATES_DIR, template_file)
