@@ -4,13 +4,12 @@ from setuptools import setup
 
 setup(
     name='Config-gen',
-    version=__import__('gencfg').__version__,
+    version=__import__('config_gen').__version__,
     description='Utility to generate configuration files',
     author='Samuele Santi',
     author_email='samuele@samuelesanti.com',
     url='https://github.com/rshk/config-gen',
     license='GNU General Public License v3 or later (GPLv3+)',
-    scripts=['gencfg.py'],
     data_files=['README.rst', 'LICENSE'],
     classifiers=[
         "Environment :: Console",
