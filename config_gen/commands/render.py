@@ -140,6 +140,10 @@ def command():
         logger.info("RENDER {} -> {}".format(template_file, dstfile))
         template = template_env.get_template(template_file)
         rendered = template.render(template_context)
+
+        if not rendered.endswith("\n"):
+            rendered += "\n"  # Add newline at the end of file
+
         with open(dstfile, 'w') as f:
             f.write(rendered.encode('utf-8'))
 
