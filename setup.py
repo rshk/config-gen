@@ -10,7 +10,7 @@ setup(
     author_email='samuele@samuelesanti.com',
     url='https://github.com/rshk/config-gen',
     license='GNU General Public License v3 or later (GPLv3+)',
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests',)),
     #data_files=['README.rst', 'LICENSE'],
     classifiers=[
         "Environment :: Console",
