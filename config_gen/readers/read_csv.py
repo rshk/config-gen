@@ -11,5 +11,8 @@ from config_gen.readers import register
 @register('csv')
 def csv_reader(filename):
     import csv
-    with open(filename, 'r') as f:
-        return csv.reader(f, delimiter=",")
+    return csv.reader(open(filename, 'r'), delimiter=",")
+    ## If we use a with statement here, the file will be closed..
+    # with open(filename, 'r') as f:
+    #     reader = csv.reader(f, delimiter=",")
+    # return reader
