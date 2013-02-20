@@ -6,14 +6,20 @@
 import os
 from config_gen.utils import GenericRegister
 
+## Warning! Never access to this one directly!
 register = GenericRegister()
+_register_imported = False
 
 
 def get_readers():
-    from config_gen.readers import read_csv
-    from config_gen.readers import read_ini
-    from config_gen.readers import read_json
-    from config_gen.readers import read_py
+    import pkgutil
+    global _register_imported
+    if not _register_imported:
+        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):
+            ## By loading this, its content will be registered
+            ## in the above register.
+            loader.find_module(module_name).load_module(module_name)
+        _register_imported = True
     return register
 
 

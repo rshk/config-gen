@@ -61,9 +61,13 @@ def command():
     (options, args) = parser.parse_args(sys.argv[1:])
 
     if options.action == 'list-readers':
-        print "Available readers:"
-        from config_gen.readers import register
-        print ", ".join(sorted(register.keys()))
+        sys.stdout.write("AVAILABLE READERS\n\n")
+        from config_gen.readers import get_readers
+        for reader_name, reader_class in get_readers().iteritems():
+            sys.stdout.write('    ' + reader_name + ' - ')
+            sys.stdout.write(reader_class.__doc__ or
+                             'No documentation available')
+            sys.stdout.write('\n')
         return
 
     DATA_DIR = options.data_dir
