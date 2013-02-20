@@ -11,8 +11,8 @@ from config_gen.readers import register
 @register('csv')
 def csv_reader(filename):
     import csv
-    return csv.reader(open(filename, 'r'), delimiter=",")
-    ## If we use a with statement here, the file will be closed..
-    # with open(filename, 'r') as f:
-    #     reader = csv.reader(f, delimiter=",")
-    # return reader
+    ## We have to preload everything in a list, otherwise we
+    ## will not be able to iterate more than once..
+    ## (todo: find a better solution for this?)
+    with open(filename, 'r') as f:
+        return list(csv.reader(f, delimiter=","))
