@@ -5,17 +5,10 @@
 
 from __future__ import absolute_import
 
-import subprocess
 import unittest
 import os
 
-from tests.utils import TestWithTmpdirMixin
-
-
-def _run(*args):
-    proc = subprocess.Popen(
-        args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return proc.communicate()
+from tests.utils import TestWithTmpdirMixin, run
 
 
 class TestQuickstartAndRender(TestWithTmpdirMixin, unittest.TestCase):
@@ -35,7 +28,7 @@ class TestQuickstartAndRender(TestWithTmpdirMixin, unittest.TestCase):
 
         os.chdir(self.tmpdir)
 
-        _run('confgen-quickstart')
+        run(('confgen-quickstart',))
 
         self.assertIsDir('templates')
         self.assertIsFile('templates/example.html.jinja')
@@ -44,7 +37,7 @@ class TestQuickstartAndRender(TestWithTmpdirMixin, unittest.TestCase):
         self.assertIsDir('build')
         self.assertIsFile('Makefile')
 
-        _run('make')
+        run(('make',))
 
         self.assertIsFile('build/example.html')
 
