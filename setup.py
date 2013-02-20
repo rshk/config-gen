@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='Config-gen',
@@ -10,6 +10,7 @@ setup(
     author_email='samuele@samuelesanti.com',
     url='https://github.com/rshk/config-gen',
     license='GNU General Public License v3 or later (GPLv3+)',
+    packages=find_packages(),
     data_files=['README.rst', 'LICENSE'],
     classifiers=[
         "Environment :: Console",
