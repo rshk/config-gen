@@ -80,8 +80,21 @@ Only ``jinja2`` is supported at the moment (``.jinja2`` files).
 Download it from http://jinja.pocoo.org/ or via ``pip install jinja2``.
 
 
+Testing
+=======
+
+To run the complete test suite::
+
+    $ python -m unittest discover -s tests
+
+To run only tests in a specific module::
+
+    $ python -m unittest tests.mytest
+
+
 TODO
 ====
 
 * Add support for XML/YAML files
+* Add support for database connections
 * Write some ``unittest`` test cases
