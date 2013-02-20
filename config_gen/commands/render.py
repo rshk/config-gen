@@ -9,10 +9,12 @@ import re
 
 from jinja2 import Environment, FileSystemLoader
 from cool_logging import getLogger
+from config_gen.utils import LazyRegister
+
 logger = getLogger('config-gen')
 
 from config_gen.exceptions import GenCfgException, UnsupportedConfFile
-from config_gen.readers import get_file_reader
+from config_gen.readers import get_file_reader, get_file_reader_class
 
 
 def command():
@@ -94,25 +96,30 @@ def command():
     logger.debug("Build dir: {}".format(options.root_dir))
 
     ## Build context from configuration files
-    template_context = {}
+    template_context = LazyRegister()
     _exclude_re = list([re.compile(x) for x in exclude_files])
 
     for conf_file in os.listdir(DATA_DIR):
         filename = os.path.join(DATA_DIR, conf_file)
+        base_name = os.path.splitext(conf_file)[0]
+
+        ## Check whether this is an excluded file
         if any([xre.match(conf_file) for xre in _exclude_re]):
             continue
+
         try:
-            reader = get_file_reader(filename)
+            reader_class = get_file_reader_class(filename)
         except UnsupportedConfFile:
             continue
-        conf_file_name = os.path.splitext(conf_file)[0]
-        if conf_file_name in template_context:
+
+        if base_name in template_context:
             raise GenCfgException(
-                "Multiple files with base name '%s' were found" %
-                conf_file_name)
-        logger.debug("Found dataset {} (from {})"
-                     "".format(conf_file_name, filename))
-        template_context[conf_file_name] = reader
+                "Multiple files with base name '%s' were found" % base_name)
+
+        logger.debug("Data file: {} (from {})".format(base_name, filename))
+
+        ## Register in the lazy context
+        template_context.register(base_name, reader_class, filename)
 
     ## For each file in templates, render and write to build
     if not os.path.exists(BUILD_DIR):

@@ -15,18 +15,46 @@ What it basically does is:
 Installation
 ============
 
-You can run ``python setup.py install`` from the source directory,
-or ``pip install git+git://github.com/rshk/config-gen.git``.
+Production version::
 
-The script will be installed in path with the name ``gencfg.py``.
+    $ pip install config-gen
+
+Development version::
+
+    $ pip install -e git+git@github.com:rshk/config-gen.git#egg=config-gen
+
+Or just run ``python setup.py install`` from the source directory.
+
 
 
 Trying out
 ==========
 
-From the sources directory, run::
+The fastest way to get started with config-gen is the quickstart script,
+that takes care of creating all the needed directories plus a Makefile,
+in the current directory::
 
-    python gencfg.py -C ./examples/conf -T ./examples/templates -B ./examples/build
+    $ confgen-quickstart
+    $ make
+    $ cat build/example.html
+    <h1>Hello, world!</h1>
+
+
+How does it work?
+=================
+
+In a very simple way: all files in the ``templates`` directory are built
+into files in ``build``, with the original extension stripped. Eg::
+
+    templates/hello.jinja -> build/hello
+    templates/hello.html.jinja -> build/hello.html
+    templates/example.html.jinja -> build/example.html
+
+The context for rendered files is built from files in the ``data`` directory.
+To each file in that directory, a "reader" is associated, by reading the
+file extension.
+Then, a context variable with the same name of the file (without extension)
+will be made available in the template.
 
 
 Supported configuration files

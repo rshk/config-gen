@@ -4,13 +4,9 @@
 """
 
 from config_gen.readers import register
-from config_gen.readers.base import BaseFileAccessor
-
 
 @register('json')
-class JsonFileAccessor(BaseFileAccessor):
-    def __init__(self, filename):
-        super(JsonFileAccessor, self).__init__(filename)
-        import json
-        with open(self.filename, 'r') as f:
-            self._parsed = json.load(f)
+def json_reader(filename):
+    import json
+    with open(filename, 'r') as f:
+        return json.load(f)

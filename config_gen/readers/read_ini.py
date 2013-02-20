@@ -5,7 +5,6 @@
 
 from ConfigParser import NoOptionError, NoSectionError, RawConfigParser
 from UserDict import DictMixin
-from config_gen.readers.base import BaseFileAccessor
 from config_gen.readers import register
 
 
@@ -28,9 +27,9 @@ class IniSectionProxy(object, DictMixin):
 
 
 @register('ini')
-class IniFileAccessor(BaseFileAccessor):
+class IniFileReader(object, DictMixin):
     def __init__(self, filename):
-        super(IniFileAccessor, self).__init__(filename)
+        self.filename = filename
         self.parser = RawConfigParser()
         self.parser.read(filename)
 

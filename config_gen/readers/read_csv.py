@@ -6,15 +6,10 @@
 from __future__ import absolute_import
 
 from config_gen.readers import register
-from config_gen.readers.base import BaseFileAccessor
-import csv
 
 
 @register('csv')
-class CsvFileAccessor(BaseFileAccessor):
-    def __init__(self, filename):
-        super(CsvFileAccessor, self).__init__(filename)
-
-    def __iter__(self):
-        reader = csv.reader(open(self.filename, 'r'), delimiter=",")
-        return iter(reader)
+def csv_reader(filename):
+    import csv
+    with open(filename, 'r') as f:
+        return csv.reader(f, delimiter=",")

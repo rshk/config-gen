@@ -17,6 +17,10 @@ def get_readers():
     return register
 
 
-def get_file_reader(filename):
+def get_file_reader_class(filename):
     ext = os.path.splitext(filename)[1][1:]
-    return get_readers()[ext](filename)
+    return get_readers()[ext]
+
+
+def get_file_reader(filename):
+    return get_file_reader_class(filename)(filename)
