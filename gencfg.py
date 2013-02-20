@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 """
-:author: Samuele Santi <samuele@santi.co.it>
+:author: Samuele Santi <samuele@samuelesanti.com>
 :created: 2012-06-03 19:44
 """
 
-import os, re, sys
+import os
+import re
+import sys
 from ConfigParser import RawConfigParser, NoSectionError, NoOptionError
 from UserDict import DictMixin
 
@@ -16,9 +18,16 @@ BUILD_DIR = None
 EXCLUDE_FILES = [r'.*~']
 
 
-class GenCfgException(Exception): pass
-class UnsupportedConfFile(GenCfgException): pass
-class UnsupportedTemplate(GenCfgException): pass
+class GenCfgException(Exception):
+    pass
+
+
+class UnsupportedConfFile(GenCfgException):
+    pass
+
+
+class UnsupportedTemplate(GenCfgException):
+    pass
 
 
 ## Accessors for configuration files ===========================================
@@ -39,6 +48,7 @@ class BaseFileAccessor(object):
     def keys(self):
         pass
 
+
 class IniSectionProxy(object, DictMixin):
     def __init__(self, parser, section):
         self.parser = parser
@@ -56,6 +66,7 @@ class IniSectionProxy(object, DictMixin):
         except NoSectionError:
             return []
 
+
 class IniFileAccessor(BaseFileAccessor, DictMixin):
     def __init__(self, filename):
         super(IniFileAccessor, self).__init__(filename)
@@ -68,22 +79,31 @@ class IniFileAccessor(BaseFileAccessor, DictMixin):
     def keys(self):
         return self.parser.sections()
 
+
 class CsvFileAccessor(BaseFileAccessor, DictMixin):
     def __init__(self, filename):
         super(CsvFileAccessor, self).__init__(filename)
 
     def __iter__(self):
         import csv
+
         reader = csv.reader(open(self.filename, 'r'), delimiter=",")
         #return reader.__iter__()
         return iter(reader)
+
 
 class PyFileAccessor(BaseFileAccessor, DictMixin):
     def __init__(self, filename):
         super(PyFileAccessor, self).__init__(filename)
         import imp
+
         _file_base_name = os.path.splitext(os.path.basename(filename))[0]
-        self._module = imp.load_module('cfgfile_%s' % _file_base_name, open(self.filename, 'r'), './mods/mymodule.py', ('.py', 'U', 1))
+        with open(self.filename, 'r') as module_file:
+            self._module = imp.load_module(
+                'cfgfile_%s' % _file_base_name,
+                module_file,
+                './mods/mymodule.py',
+                ('.py', 'U', 1))
 
     def keys(self):
         return dir(self._module)
@@ -95,16 +115,19 @@ class PyFileAccessor(BaseFileAccessor, DictMixin):
         else:
             return member
 
+
 class JsonFileAccessor(BaseFileAccessor, DictMixin):
     def __init__(self, filename):
         super(JsonFileAccessor, self).__init__(filename)
         try:
             #noinspection PyUnresolvedReferences
             import demjson
+
             with open(self.filename, 'r') as f:
                 self._parsed = demjson.decode(f.read())
         except ImportError:
             import json
+
             with open(self.filename, 'r') as f:
                 self._parsed = json.load(f)
 
@@ -117,6 +140,7 @@ ACCESSORS = {
     #'xml': None,
     #'yaml': None,
 }
+
 
 def get_file_accessor(filename):
     ext = os.path.splitext(filename)[1][1:]
@@ -132,21 +156,26 @@ class BaseRenderer(object):
     def render(self, context):
         raise NotImplementedError("The render() method is not implemented")
 
+
 class Jinja2Renderer(BaseRenderer):
     def render(self, context):
         from jinja2 import Template
+
         with open(self.filename, 'r') as f:
             template_text = f.read()
         template = Template(template_text)
         return template.render(context)
 
+
 RENDERERS = {
     'jinja2': Jinja2Renderer,
 }
 
+
 def get_file_renderer(filename):
     ext = os.path.splitext(filename)[1][1:]
     return RENDERERS[ext](filename)
+
 
 def render_file(filename, context):
     return get_file_renderer(filename).render(context)
@@ -157,17 +186,20 @@ def render_file(filename, context):
 if __name__ == '__main__':
     ## Parse command-line options
     from optparse import OptionParser
+
     parser = OptionParser()
     parser.add_option("-C", "--conf-dir", dest="conf_dir", metavar="DIR",
-        help="Directory from which to load context files")
+                      help="Directory from which to load context files")
     parser.add_option("-T", "--tpl-dir", dest="templates_dir", metavar="DIR",
-        help="Directory from which to load files to be compiled")
+                      help="Directory from which to load files to be compiled")
     parser.add_option("-B", "--build-dir", dest="build_dir", metavar="DIR",
-        help="Destination directory for built files")
-    parser.add_option("--list-accessors", dest="action", action="store_const", const="list-accessors",
-        help="List available file accessors and exits")
-    parser.add_option("--list-renderers", dest="action", action="store_const", const="list-renderers",
-        help="List available renderers and exits")
+                      help="Destination directory for built files")
+    parser.add_option("--list-accessors", dest="action", action="store_const",
+                      const="list-accessors",
+                      help="List available file accessors and exits")
+    parser.add_option("--list-renderers", dest="action", action="store_const",
+                      const="list-renderers",
+                      help="List available renderers and exits")
     (options, args) = parser.parse_args(sys.argv[1:])
 
     if options.action == 'list-renderers':
@@ -190,7 +222,8 @@ if __name__ == '__main__':
         sys.exit(2)
 
     ## Show some info
-    print "Loaded %d accessor(s) and %d renderer(s)" % (len(ACCESSORS), len(RENDERERS))
+    print "Loaded %d accessor(s) and %d renderer(s)" % (
+        len(ACCESSORS), len(RENDERERS))
 
     ## Build context from configuration files
     CONTEXT = {}
@@ -206,7 +239,8 @@ if __name__ == '__main__':
             continue
         _cff_name = os.path.splitext(_cff_basename)[0]
         if CONTEXT.has_key(_cff_name):
-            raise GenCfgException("Multiple files with base name '%s' were found" % _cff_name)
+            raise GenCfgException(
+                "Multiple files with base name '%s' were found" % _cff_name)
         print "LOAD %s from %s" % (_cff_name, filename)
         CONTEXT[_cff_name] = accessor
 
