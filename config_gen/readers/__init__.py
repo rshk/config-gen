@@ -4,6 +4,7 @@
 """
 
 import os
+from config_gen.exceptions import UnsupportedConfFile
 from config_gen.utils import GenericRegister
 
 ## Warning! Never access to this one directly!
@@ -25,7 +26,10 @@ def get_readers():
 
 def get_file_reader_class(filename):
     ext = os.path.splitext(filename)[1][1:]
-    return get_readers()[ext]
+    try:
+        return get_readers()[ext]
+    except KeyError:
+        raise UnsupportedConfFile
 
 
 def get_file_reader(filename):
