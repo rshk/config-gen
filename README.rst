@@ -2,8 +2,9 @@
 Configuration generator
 ################################
 
+
 This project was born to generate dhcp/dns configuration files on a machine
-which resources are too limited to run an LDAP server.
+which resources are too limited to run a LDAP server.
 
 What it basically does is:
 
@@ -24,7 +25,6 @@ Development version::
     $ pip install -e git+git@github.com:rshk/config-gen.git#egg=config-gen
 
 Or just run ``python setup.py install`` from the source directory.
-
 
 
 Trying out
@@ -53,31 +53,67 @@ into files in ``build``, with the original extension stripped. Eg::
 The context for rendered files is built from files in the ``data`` directory.
 To each file in that directory, a "reader" is associated, by reading the
 file extension.
+
 Then, a context variable with the same name of the file (without extension)
 will be made available in the template.
 
 
-Supported configuration files
-=============================
+Included readers
+================
 
-Configuration files are the ones used to build the context.
-Their name (without extension) must be unique all around the ``conf`` directory.
+Readers are used to read data files and make them accessible
+in the template context.
 
-* ``ini`` - Parsed through a ``ConfigParser.RawConfigParser`` as
-  ``{{ file.section.option }}``
-* ``csv`` - Parsed using the ``csv`` module, as an iterable of lists.
-* ``json`` - Parsed using ``demjson`` or, as fallback, the ``json`` module
-  from standard library.
-* ``py`` - Python modules are supported too. The content of the module is
-  extracted; if a member is a function, its return value is used.
+Their name (without extension) must be unique all around the ``data``
+directory, to prevent conflicts.
+
+**txt** (``config_gen.readers.read_txt.txt_reader``)
+    Loads a plain text file, returning its raw content directly.
 
 
-Supported template engines
-==========================
+**py** (``config_gen.readers.read_py.PyFileAccessor``)
+    Loads and returns a Python module.
 
-Only ``jinja2`` is supported at the moment (``.jinja2`` files).
+    The module content will then be fully accessible from the template.
 
-Download it from http://jinja.pocoo.org/ or via ``pip install jinja2``.
+
+**json** (``config_gen.readers.read_json.json_reader``)
+    Reads a JSON file and returns it directly. It will then be accessible as
+    usual from the template.
+
+
+**csv** (``config_gen.readers.read_csv.csv_reader``)
+    Reads a Comma-Separated Values file into a list of tuples.
+
+    The CSV file must be comma-separated (semicolons are not supported). Fields
+    containing commas must be enclosed in double quotes.
+
+
+**ini** (``config_gen.readers.read_ini.IniFileReader``)
+    Reader for configuration/.ini files.
+
+    Files will be accessible as::
+
+        {{ filename.section.option }}
+
+    Or, for sections/options containing dots::
+
+        {{ filename["my.sect.ion"]["my.opt.ion"] }}
+
+
+Template engines
+================
+
+To render the templates into configuration files, the awesome Jinja2_
+template engine has been used.
+
+I once thought about allowing pluggable template engines, but the
+awesomeness of Jinja made me rethink that decision :)
+
+(By the way, just let me know if you'd absolutely need support for
+another template engine, and why..)
+
+.. _Jinja2: http://jinja.pocoo.org/
 
 
 Testing
@@ -87,14 +123,17 @@ To run the complete test suite::
 
     $ python -m unittest discover -s tests
 
-To run only tests in a specific module::
+To run only tests in a specific sub-module::
 
-    $ python -m unittest tests.mytest
+    $ python -m unittest tests.test_something
 
 
-TODO
-====
+TODO-List
+=========
 
 * Add support for XML/YAML files
-* Add support for database connections
-* Write some ``unittest`` test cases
+* Add support for database connections (sqlite, mysql, postgres, mongo..)
+* Add support for "custom cases", through some kind of configuration file
+  * Eg. for semicolon-separated CSV files
+* Add support for importing external readers (add a ``--load`` option?)
+* Write the missing test cases
