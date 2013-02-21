@@ -19,7 +19,8 @@ def get_readers():
         for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):
             ## By loading this, its content will be registered
             ## in the above register.
-            loader.find_module(module_name).load_module(module_name)
+            loader.find_module(module_name)\
+                .load_module(__name__ + '.' + module_name)
         _register_imported = True
     return register
 
