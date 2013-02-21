@@ -99,10 +99,12 @@ def command():
     logger.debug("Templates dir: {}".format(options.root_dir))
     logger.debug("Build dir: {}".format(options.root_dir))
 
-    ## Build context from configuration files
-    template_context = LazyRegister()
+    ## List of patterns to select template files to exclude
     _exclude_re = list([re.compile(x) for x in exclude_files])
 
+    ## Prepare the context by registering readers for all the
+    ## found data files
+    template_context = LazyRegister()
     for conf_file in os.listdir(DATA_DIR):
         filename = os.path.join(DATA_DIR, conf_file)
         base_name = os.path.splitext(conf_file)[0]
@@ -121,14 +123,16 @@ def command():
         ## Register in the lazy context
         template_context.register(base_name, reader_class, filename)
 
-    ## For each file in templates, render and write to build
+    ## Make sure the build directory exists
     if not os.path.exists(BUILD_DIR):
         os.makedirs(BUILD_DIR)
 
+    ## Prepare the templates environment + loader
     template_env = Environment(loader=FileSystemLoader(
         [TEMPLATES_DIR] + EXTRA_TEMPLATES_DIRS,
     ))
 
+    ## For each file in templates, render and write to build
     for template_file in os.listdir(TEMPLATES_DIR):
         if any([xre.match(template_file) for xre in _exclude_re]):
             continue
