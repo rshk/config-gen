@@ -9,6 +9,6 @@ from config_gen.readers import register
 
 
 @register('txt')
-def csv_reader(filename):
+def txt_reader(filename):
     with open(filename, 'r') as f:
         return f.read()
