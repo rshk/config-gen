@@ -107,10 +107,6 @@ def command():
         filename = os.path.join(DATA_DIR, conf_file)
         base_name = os.path.splitext(conf_file)[0]
 
-        ## Check whether this is an excluded file
-        if any([xre.match(conf_file) for xre in _exclude_re]):
-            continue
-
         try:
             reader_class = get_file_reader_class(filename)
         except UnsupportedConfFile:
