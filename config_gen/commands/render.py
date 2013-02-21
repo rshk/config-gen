@@ -9,7 +9,7 @@ import re
 
 from jinja2 import Environment, FileSystemLoader
 from cool_logging import getLogger
-from config_gen.utils import LazyRegister
+from config_gen.utils import LazyRegister, wrap_text
 
 logger = getLogger('config-gen')
 
@@ -64,10 +64,16 @@ def command():
         sys.stdout.write("AVAILABLE READERS\n\n")
         from config_gen.readers import get_readers
         for reader_name, reader_class in get_readers().iteritems():
-            sys.stdout.write('    ' + reader_name + ' - ')
-            sys.stdout.write(reader_class.__doc__ or
-                             'No documentation available')
-            sys.stdout.write('\n')
+
+            reader_class_name = \
+                reader_class.__module__ + '.' + \
+                reader_class.__name__
+
+            sys.stdout.write('    ' + reader_name +
+                             ' ' + reader_class_name + '\n')
+            doc = (reader_class.__doc__ or 'No documentation available')
+            doc = wrap_text(doc, indent=' ' * 8)
+            sys.stdout.write(doc + "\n")
         return
 
     DATA_DIR = options.data_dir

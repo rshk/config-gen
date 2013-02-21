@@ -43,3 +43,18 @@ def lazy_property(fn):
         return getattr(self, attr_name)
 
     return property(decorated)
+
+
+def wrap_text(text, width=70, indent='', dedent=True):
+    width -= len(indent)
+    text = text.strip("\n")
+    import textwrap
+    if dedent:
+        text = textwrap.dedent(text)
+    lines = []
+    for line in text.split("\n\n"):
+        for line1 in textwrap.wrap(line, width):
+            lines.append(line1.rstrip())
+        lines.append("")  # Leave a blank line at the end
+    lines.pop(-1)
+    return "\n".join([indent + line for line in lines]) + "\n"
