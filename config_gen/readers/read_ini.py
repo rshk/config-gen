@@ -1,6 +1,5 @@
 """
-:author: samu
-:created: 2/20/13 8:31 PM
+Config-gen: INI reader
 """
 
 from ConfigParser import NoOptionError, NoSectionError, RawConfigParser
@@ -28,6 +27,17 @@ class IniSectionProxy(object, DictMixin):
 
 @register('ini')
 class IniFileReader(object, DictMixin):
+    """
+    Reader for configuration/.ini files.
+
+    Files will be accessible as::
+
+        {{ filename.section.option }}
+
+    Or, for sections/options containing dots::
+
+        {{ filename["my.sect.ion"]["my.opt.ion"] }}
+    """
     def __init__(self, filename):
         self.filename = filename
         self.parser = RawConfigParser()

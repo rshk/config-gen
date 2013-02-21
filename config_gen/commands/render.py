@@ -64,16 +64,15 @@ def command():
         sys.stdout.write("AVAILABLE READERS\n\n")
         from config_gen.readers import get_readers
         for reader_name, reader_class in get_readers().iteritems():
-
             reader_class_name = \
-                reader_class.__module__ + '.' + \
-                reader_class.__name__
-
-            sys.stdout.write('    ' + reader_name +
-                             ' ' + reader_class_name + '\n')
+                reader_class.__module__ + '.' + reader_class.__name__
             doc = (reader_class.__doc__ or 'No documentation available')
-            doc = wrap_text(doc, indent=' ' * 8)
-            sys.stdout.write(doc + "\n")
+            doc = wrap_text(doc, indent=' ' * 8, width=80)
+            sys.stdout.write("{name} ({class_name})\n\n{doc}\n\n".format(
+                name=reader_name,
+                class_name=reader_class_name,
+                doc=doc,
+            ))
         return
 
     DATA_DIR = options.data_dir
