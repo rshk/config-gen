@@ -66,12 +66,13 @@ def command():
             reader_class_name = \
                 reader_class.__module__ + '.' + reader_class.__name__
             doc = (reader_class.__doc__ or 'No documentation available')
-            doc = wrap_text(doc, indent=' ' * 8, width=80)
-            sys.stdout.write("{name} ({class_name})\n\n{doc}\n\n".format(
-                name=reader_name,
-                class_name=reader_class_name,
-                doc=doc,
-            ))
+            doc = wrap_text(doc, indent=' ' * 4, width=80)
+            sys.stdout.write(
+                "**{name}** (``{class_name}``)\n{doc}\n\n".format(
+                    name=reader_name,
+                    class_name=reader_class_name,
+                    doc=doc,
+                ))
         return
 
     DATA_DIR = options.data_dir
