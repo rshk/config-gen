@@ -1,7 +1,7 @@
 """
-:author: samu
-:created: 2/20/13 8:35 PM
+Config-gen: PY reader
 """
+
 import imp
 import os
 from UserDict import DictMixin
@@ -12,6 +12,12 @@ from config_gen.utils import lazy_property
 
 @register('py')
 class PyFileAccessor(object, DictMixin):
+    """
+    Loads and returns a Python module.
+
+    The module content will then be fully accessible from the template.
+    """
+
     def __init__(self, filename):
         self.filename = filename
 

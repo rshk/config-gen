@@ -1,6 +1,5 @@
 """
-:author: samu
-:created: 2/20/13 8:45 PM
+Config-gen: ``confgen-render`` command
 """
 
 import sys
@@ -14,7 +13,7 @@ from config_gen.utils import LazyRegister, wrap_text
 logger = getLogger('config-gen')
 
 from config_gen.exceptions import GenCfgException, UnsupportedConfFile
-from config_gen.readers import get_file_reader, get_file_reader_class
+from config_gen.readers import get_file_reader_class
 
 
 def command():
@@ -61,7 +60,7 @@ def command():
     (options, args) = parser.parse_args(sys.argv[1:])
 
     if options.action == 'list-readers':
-        sys.stdout.write("AVAILABLE READERS\n\n")
+        sys.stdout.write("AVAILABLE READERS\n" + ("=" * 20) + "\n\n")
         from config_gen.readers import get_readers
         for reader_name, reader_class in get_readers().iteritems():
             reader_class_name = \
@@ -141,9 +140,9 @@ def command():
     for template_file in os.listdir(TEMPLATES_DIR):
         if any([xre.match(template_file) for xre in _exclude_re]):
             continue
+        template = template_env.get_template(template_file)
         dstfile = os.path.join(BUILD_DIR, os.path.splitext(template_file)[0])
         logger.info("RENDER {} -> {}".format(template_file, dstfile))
-        template = template_env.get_template(template_file)
         rendered = template.render(template_context)
 
         if not rendered.endswith("\n"):
