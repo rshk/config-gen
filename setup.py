@@ -28,4 +28,5 @@ setup(
             'confgen-quickstart = config_gen.commands.quickstart:command',
         ],
     },
+    test_suite='tests',
 )
