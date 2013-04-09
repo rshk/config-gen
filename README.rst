@@ -13,6 +13,12 @@ What it basically does is:
 * Render a bunch of files through some template engine, passing the context.
 
 
+.. image:: https://travis-ci.org/rshk/config-gen.png
+    :alt: Build status
+    :target: https://travis-ci.org/rshk/config-gen
+
+
+
 Installation
 ============
 
