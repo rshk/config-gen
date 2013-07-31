@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'confgen-render = config_gen.commands.render:command',
             'confgen-quickstart = config_gen.commands.quickstart:command',
+            'confgen-render-file = config_gen.commands.render_file:command',
         ],
     },
     test_suite='tests',
