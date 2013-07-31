@@ -16,3 +16,6 @@
 /.idea
 
 /.venv*
+
+/.cache
+/.coverage
